@@ -112,7 +112,9 @@ const getUpdatedTrackList = async (
     )
   }
   Logger.debug(
-    `TrackHelper :: getUpdatedTrackList :: END updated_track_list:${updated_track_list}`
+    `TrackHelper :: getUpdatedTrackList :: END updated_track_list:${JSON.stringify(
+      updated_track_list
+    )}`
   )
   return updated_track_list
 }

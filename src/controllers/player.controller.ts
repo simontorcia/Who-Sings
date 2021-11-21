@@ -33,7 +33,9 @@ const getHighScores = async (req: Request, res: Response) => {
     })
 
     Logger.debug(
-      `PlayerController :: getHighScores :: END high_scores_response:${high_scores_response}`
+      `PlayerController :: getHighScores :: END high_scores_response:${JSON.stringify(
+        high_scores_response
+      )}`
     )
 
     return res.json(high_scores_response)
@@ -60,7 +62,9 @@ const getLeaderboard = async (req: Request, res: Response) => {
     }
     const leaderBoard_response = await playerClient.getLeaderboard()
     Logger.debug(
-      `PlayerController :: getLeaderboard :: END with leaderBoard_response:${leaderBoard_response}`
+      `PlayerController :: getLeaderboard :: END with leaderBoard_response:${JSON.stringify(
+        leaderBoard_response
+      )}`
     )
     return res.json(leaderBoard_response)
   } catch (err) {
@@ -93,7 +97,9 @@ const saveScore = async (req: Request, res: Response) => {
     })
 
     Logger.debug(
-      `PlayerController :: saveScore :: END with save_score_response:${save_score_response} `
+      `PlayerController :: saveScore :: END with save_score_response:${JSON.stringify(
+        save_score_response
+      )} `
     )
 
     return res.json(save_score_response)
