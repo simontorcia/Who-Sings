@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  db:
+    container_name: mongoDB
+    image: mongo:latest
+    restart: always
+    # volumes:
+    #   - ./mongo_DB_Data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE= Mongo_DB
+    ports:
+      - 27017:27017
