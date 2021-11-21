@@ -24,15 +24,15 @@ const startGame = async (req: Request, res: Response) => {
     const url = req.url
     const { game_size } = req.body
 
-    const game = await gameClient.startGame(
-      {
-        game_size,
-      },
-      url
-    )
+    const game = await gameClient.startGame({
+      game_size,
+      url,
+    })
 
     if (game.length === +game_size) {
-      Logger.debug(`GameController :: startGame :: END game:${JSON.stringify(game)}`)
+      Logger.debug(
+        `GameController :: startGame :: END game:${JSON.stringify(game)}`
+      )
       return res.json(game)
     }
     Logger.debug(`GameController :: startGame :: END with GENERIC ERROR`)
