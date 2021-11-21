@@ -2,26 +2,13 @@
 
 JavaScript Engineer Test
 
-1. install dependencies
-   `npm install`
-2. start application
-   `npm start`
-
-# Compile/Build and Run App
-
-1. Build
-   `npm run build`
-2. Run
-   `node build/index.js`
-
-# Install Docker and Docker-compose
-
 - install docker
-- create docker-compose.yml with declarations
-- start container
-  `docker-compose up`
-- disconnect
-  `docker-compose down`
-- connect DB to API
+- run `docker-compose up` for
+- run `docker-compose down` for
+- create `.env` file based on `process_env`
+- run `npm install` for installing dependencies
 
-# Install Docker and Docker-compose
+- run `npm test` for start tests
+- run `npm start` for start application
+
+- check api documentation into `api_doc` folder
