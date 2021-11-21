@@ -3,10 +3,11 @@
 JavaScript Engineer Test
 
 - install docker
-- run `docker-compose up` for
-- run `docker-compose down` for
 - create `.env` file based on `process_env`
 - run `npm install` for installing dependencies
+
+- run `docker-compose up` for start application
+- run `docker-compose down` for stop application
 
 - run `npm test` for start tests
 - run `npm start` for start application
