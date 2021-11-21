@@ -187,7 +187,9 @@ const getUpdatedBySnippetTrack = async (
 ): Promise<ITrack | null> => {
   try {
     Logger.debug(
-      `TrackHelper :: getUpdatedBySnippetTrack :: START track:${track}`
+      `TrackHelper :: getUpdatedBySnippetTrack :: START track:${JSON.stringify(
+        track
+      )}`
     )
     return !checkOnTrackSnippet(track) ? await addSnippetToTrack(track) : track
   } catch (err) {
