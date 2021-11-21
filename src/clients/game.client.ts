@@ -17,7 +17,7 @@ const startGame = async (
   const valid_track_list = await trackHelper.getValidTrackList(game_size)
 
   if (!valid_track_list) {
-    throw new Error('GAME_CLIENT::START_GAME::TRACK_LIST_NOT_VALID')
+    return []
   }
 
   const game = await gameHelper.createGameEngine(
@@ -25,8 +25,9 @@ const startGame = async (
     valid_track_list,
     url
   )
-  if (!game) {
-    throw new Error('GAME_CLIENT::START_GAME::GAME_NOT_CREATED')
+
+  if (!game || game.length != game_size) {
+    return []
   }
   Logger.debug(
     `GameClient :: startGame :: END with game:${JSON.stringify(game)}`
