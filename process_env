@@ -1,0 +1,8 @@
+# DEFAULT = 9001
+PORT=
+
+# apikey needed for musixmatch API
+MUSIXMATCH_APIKEY=
+
+# path
+ORIGIN=
