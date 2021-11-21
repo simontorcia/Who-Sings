@@ -13,8 +13,9 @@ import {
 import Logger from '../shared/logger.lib'
 
 const addSnippetToTrack = async (track: ITrack): Promise<ITrack | null> => {
-  try {
-    Logger.debug(`TrackHelper :: addSnippetToTrack :: START track:${track}`)
+  Logger.debug(
+    `TrackHelper :: addSnippetToTrack :: START track:${JSON.stringify(track)}`
+  )
 
     const snippet = await musixmatchService.getSnippetByTrackId(track.track_id)
 
