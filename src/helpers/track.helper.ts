@@ -18,6 +18,10 @@ const addSnippetToTrack = async (track: ITrack): Promise<ITrack | null> => {
 
     const snippet = await musixmatchService.getSnippetByTrackId(track.track_id)
 
+    if (!snippet) {
+      return null
+    }
+
     const updated_track = await trackService.addSnippetIntoTrack(track, snippet)
 
     if (!updated_track) {
@@ -25,10 +29,12 @@ const addSnippetToTrack = async (track: ITrack): Promise<ITrack | null> => {
     }
 
     if (snippet === ERROR_NOT_VALID_SNIPPET) {
-      // UPDATE FLAG
-      const snippet_error_track = await trackService.updateOnePlayed(
-        updated_track
+      Logger.debug(
+        `TrackHelper :: addSnippetToTrack :: ${ERROR_NOT_VALID_SNIPPET} `
       )
+
+      // UPDATE FLAG
+      await trackService.updateOnePlayed(updated_track)
       return null
     }
     Logger.debug(
@@ -81,8 +87,8 @@ const getPlayedValue = async (used_pages: string[]) => {
       if (min_played) {
         played = min_played
       }
+      Logger.debug(`TrackHelper :: getPlayedValue :: END played: ${played}`)
     }
-    Logger.debug(`TrackHelper :: getPlayedValue :: END played: ${played}`)
     return played
   } catch (err) {
     Logger.debug(`TrackHelper :: getPlayedValue :: err: ${err}`)
@@ -99,6 +105,9 @@ const getUpdatedTrackList = async (
     Logger.debug(
       `TrackHelper :: getUpdatedTrackList :: START used_pages:${used_pages} and game_size:${game_size} and played:${played}`
     )
+
+    const track_list: ITrack[] = []
+
     const random_page = utilsLib.getFilteredRandomPage(
       MIN_API_PAGE,
       MAX_API_PAGE,
@@ -107,19 +116,19 @@ const getUpdatedTrackList = async (
 
     await createTrackList(game_size, random_page)
 
-    const updated_track_list = await trackService.getValidTrackList(played)
+    const valid_track_list = await trackService.getValidTrackList(played)
 
-    if (!updated_track_list) {
-      return []
+    if (valid_track_list) {
+      Logger.debug(
+        `TrackHelper :: getUpdatedTrackList :: END valid_track_list:${JSON.stringify(
+          valid_track_list
+        )}`
+      )
+      return valid_track_list
     }
-    Logger.debug(
-      `TrackHelper :: getUpdatedTrackList :: END updated_track_list:${JSON.stringify(
-        updated_track_list
-      )}`
-    )
-    return updated_track_list
+    return track_list
   } catch (err) {
-    Logger.debug(`TrackHelper :: getUpdatedTrackList :: err: ${err}`)
+    Logger.error(`ArtistHelper :: getUpdatedTrackList :: ERR: ${err}`)
     throw err
   }
 }
@@ -129,7 +138,6 @@ const getValidTrackList = async (game_size: number): Promise<ITrack[]> => {
     Logger.debug(
       `TrackHelper :: getValidTrackList :: START game_size:${game_size}`
     )
-
     const used_pages = await trackService.getUsedPages()
 
     const played = used_pages
@@ -141,10 +149,9 @@ const getValidTrackList = async (game_size: number): Promise<ITrack[]> => {
     if (!db_valid_track_list) {
       return []
     }
-    // CHECK IF ALREADY GETTED ALL PAGES FROM API
     if (
       used_pages &&
-      used_pages.length < 100 &&
+      used_pages.length < MAX_API_PAGE &&
       checkTrackListSize(db_valid_track_list, game_size)
     ) {
       return getUpdatedTrackList(used_pages, game_size, played)
@@ -156,7 +163,7 @@ const getValidTrackList = async (game_size: number): Promise<ITrack[]> => {
     )
     return db_valid_track_list
   } catch (err) {
-    Logger.debug(`TrackHelper :: getValidTrackList :: err: ${err}`)
+    Logger.error(`ArtistHelper :: getValidTrackList :: ERR: ${err}`)
     throw err
   }
 }

@@ -105,4 +105,5 @@ const getWrongAnswers = async (
 
 export const gameHelper = {
   createGameEngine,
+  getWrongAnswers,
 }

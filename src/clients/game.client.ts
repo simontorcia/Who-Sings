@@ -10,18 +10,22 @@ const startGame = async (
   payload: IStartGameRequest
 ): Promise<IStartGameResponseItem[]> => {
   const { game_size } = payload
+  const game: IStartGameResponseItem[] = []
 
   Logger.debug(`GameClient :: startGame :: START with game_size:${game_size}`)
 
   const valid_track_list = await trackHelper.getValidTrackList(game_size)
 
   if (!valid_track_list) {
-    throw new Error('GAME_CLIENT::START_GAME::TRACK_LIST_NOT_VALID')
+    return game
   }
 
-  const game = await gameHelper.createGameEngine(payload, valid_track_list)
-  if (!game) {
-    throw new Error('GAME_CLIENT::START_GAME::GAME_NOT_CREATED')
+  const created_game = await gameHelper.createGameEngine(
+    payload,
+    valid_track_list
+  )
+  if (created_game) {
+    return created_game
   }
   Logger.debug(
     `GameClient :: startGame :: END with game:${JSON.stringify(game)}`
