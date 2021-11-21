@@ -73,6 +73,12 @@ const getLeaderboard = async (req: Request, res: Response) => {
         leaderBoard_response
       )}`
     )
+
+    if (leaderBoard_response.leaderboard.length === 0) {
+      return res.json({
+        message: `${GET_LEADERBOARD.RESPONSE_EMPTY}`,
+      })
+    }
     return res.json(leaderBoard_response)
   } catch (err) {
     Logger.error(`PlayerController :: getLeaderboard :: Error:${err}`)
