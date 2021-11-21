@@ -1,8 +1,7 @@
-import { PORT } from './constants/constants'
+import { ORIGIN, PORT } from './constants/constants'
 import app from './app'
-import Logger from './shared/logger.lib';
+import Logger from './shared/logger.lib'
 
-app.listen(PORT, () => Logger.debug(`Server is running @ http://localhost:${PORT}`))
-
-
-
+app.listen(PORT, () =>
+  Logger.debug(`Server is running @ http://${ORIGIN}:${PORT}`)
+)
