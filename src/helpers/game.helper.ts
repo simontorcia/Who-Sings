@@ -20,7 +20,9 @@ const createGameEngine = async (
   const random_indexes = []
 
   Logger.debug(
-    `GameHelper :: createGameEngine :: START game_size: ${game_size} and valid_track_list:${JSON.stringify(valid_track_list)}`
+    `GameHelper :: createGameEngine :: START game_size: ${game_size} and valid_track_list:${JSON.stringify(
+      valid_track_list
+    )}`
   )
 
   let i = 0
@@ -52,7 +54,9 @@ const createGameEngine = async (
         correct_answer: updated_track.artist_name,
         wrong_answers,
       }
-      Logger.debug(`GameHelper :: createGameEngine :: quiz: ${JSON.stringify(quiz)}`)
+      Logger.debug(
+        `GameHelper :: createGameEngine :: quiz: ${JSON.stringify(quiz)}`
+      )
       game.push(quiz)
 
       to_update_tracks.push(updated_track)

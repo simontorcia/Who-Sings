@@ -9,7 +9,9 @@ const getTracksResponseToITrackMapper = (
   track: ITrackResponse
 ): ITrack => {
   Logger.debug(
-    `GetTracksMapper :: getTracksResponseToITrackMapper :: START with track:${track}`
+    `GetTracksMapper :: getTracksResponseToITrackMapper :: START with track:${JSON.stringify(
+      track
+    )}`
   )
   const iTrack: ITrack = {
     page,
@@ -20,7 +22,9 @@ const getTracksResponseToITrackMapper = (
     played: PLAYED_INIT_VALUE,
   }
   Logger.debug(
-    `GetTracksMapper :: getTracksResponseToITrackMapper :: END with iTrack:${iTrack}`
+    `GetTracksMapper :: getTracksResponseToITrackMapper :: END with iTrack:${JSON.stringify(
+      iTrack
+    )}`
   )
   return iTrack
 }

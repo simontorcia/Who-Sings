@@ -28,7 +28,9 @@ const getHighScores = async (
     high_scores: utilsLib.removeDuplicatesFromNumberList(high_scores),
   }
 
-  Logger.debug(`PlayerClient :: getHighScores :: END with result:${result}`)
+  Logger.debug(
+    `PlayerClient :: getHighScores :: END with result:${JSON.stringify(result)}`
+  )
   return result
 }
 
@@ -40,7 +42,9 @@ const getLeaderboard = async (): Promise<IGetLeaderboardResponse> => {
     throw new Error('PLAYER_CLIENT::GET_LEADERBOARD::LEADERBOARD_NULL')
   }
   Logger.debug(
-    `PlayerClient :: getLeaderboard :: END with leaderboard:${leaderboard}`
+    `PlayerClient :: getLeaderboard :: END with leaderboard:${JSON.stringify(
+      leaderboard
+    )}`
   )
 
   return { leaderboard }
@@ -69,7 +73,9 @@ const saveScore = async (
     }
   }
   const result = { player_name: updated_player.name, score }
-  Logger.debug(`PlayerClient :: saveScore :: END with result:${result}`)
+  Logger.debug(
+    `PlayerClient :: saveScore :: END with result:${JSON.stringify(result)}`
+  )
 
   return result
 }
