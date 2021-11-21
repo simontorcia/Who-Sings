@@ -1,4 +1,6 @@
-import express, { Application } from 'express'
+import express from 'express'
+import expressOasGenerator from 'express-oas-generator'
+
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -7,10 +9,11 @@ import gameRouter from './routes/game.routes'
 import playerRouter from './routes/player.routes'
 
 class App {
-  public app: Application
+  public app: express.Application
 
   constructor() {
     this.app = express()
+    expressOasGenerator.init(<express.Express>this.app, {})
     this.setConfig()
     this.routes()
     mongoConnection.setConfig()
