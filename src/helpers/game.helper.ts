@@ -72,8 +72,8 @@ const createQuiz = async (
 
   if (updated_track && !!updated_track.snippet && wrong_answers.length > 0) {
     const quiz = {
-      question: 'updated_track.snippet',
-      correct_answer: 'updated_track.artist_name',
+      question: updated_track.snippet,
+      correct_answer: updated_track.artist_name,
       wrong_answers,
     }
     Logger.debug(
