@@ -1,0 +1,320 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample Game server. For this example , you can use the api key `test_key` to test the authorization filters.",
+    "version": "1.0.0",
+    "title": "Who sings Swagger"
+  },
+  "host": "who-sin.swagger.io",
+  "basePath": "/v2",
+  "schemes": ["https", "http"],
+  "paths": {
+    "/start-game": {
+      "post": {
+        "tags": ["game"],
+        "summary": "It takes the Question and the Correct Answer from DB, but gets the \"Wrong Answers array\" each time from API calling \"artist.related.get\" endpoint",
+        "operationId": "startGame",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StartGameRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/StartGameResponse"
+            }
+          },
+          "400": {
+            "description": "game_size is missing or wrong"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "generic error"
+          }
+        }
+      }
+    },
+    "/lazy-start-game": {
+      "post": {
+        "tags": ["game"],
+        "summary": "Like start game but taking the whole data from DB",
+        "operationId": "LazyStartGame",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StartGameRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/StartGameResponse"
+            }
+          },
+          "400": {
+            "description": "game_size is missing or wrong"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "generic error"
+          }
+        }
+      }
+    },
+    "/savescore": {
+      "post": {
+        "tags": ["player"],
+        "summary": "Save Score",
+        "operationId": "saveScore",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SaveScoreRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/SaveScoreResponse"
+            }
+          },
+          "400": {
+            "description": "missing or wrong parameters"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "generic error"
+          }
+        }
+      }
+    },
+    "/leaderboard": {
+      "get": {
+        "tags": ["player"],
+        "summary": "Get LeaderBoard",
+        "operationId": "leaderboard",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/LeaderboardResponse"
+            }
+          },
+          "400": {
+            "description": "missing or wrong parameters"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "generic error"
+          }
+        }
+      }
+    },
+    "/high-scores": {
+      "get": {
+        "tags": ["player"],
+        "summary": "Get High Score",
+        "operationId": "high_score",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "player_name",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/HighScoreResponse"
+            }
+          },
+          "400": {
+            "description": "missing player_name"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Scores not found for user"
+          },
+          "500": {
+            "description": "generic error"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "StartGameRequest": {
+      "type": "object",
+      "required": ["game_size"],
+      "properties": {
+        "game_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "SaveScoreRequest": {
+      "type": "object",
+      "required": ["score", "player_name"],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "player_name": {
+          "type": "string"
+        }
+      }
+    },
+    "SaveScoreResponse": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "player_name": {
+          "type": "string"
+        }
+      }
+    },
+    "StartGameResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Quiz"
+      },
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "LeaderboardResponse": {
+      "type": "object",
+      "properties": {
+        "leaderboard": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LeaderboardResponseItem"
+          }
+        }
+      }
+    },
+    "LeaderboardResponseItem": {
+      "type": "object",
+      "properties": {
+        "player_name": {
+          "type": "string",
+          "example": "simone"
+        },
+        "score": {
+          "type": "integer",
+          "format": "int64",
+          "example": 10
+        }
+      }
+    },
+    "Quiz": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "example": "all prepare yourself for the Rubberband Man"
+        },
+        "correct_answer": {
+          "type": "string",
+          "example": "Cooltone Karaoke"
+        },
+        "wrong_answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Wrong_Answers"
+          }
+        }
+      },
+      "xml": {
+        "name": "Quiz"
+      }
+    },
+    "Wrong_Answers": {
+      "type": "string",
+      "example": "Kryštof"
+    },
+    "HighScoreResponse": {
+      "type": "object",
+      "properties": {
+        "high_scores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HighScoreResponseItem"
+          }
+        },
+        "player_name": {
+          "type": "string"
+        }
+      }
+    },
+    "HighScoreResponseItem": {
+      "type": "integer",
+      "format": "int64",
+      "example": 10
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

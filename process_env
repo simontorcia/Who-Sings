@@ -1,4 +1,4 @@
-# DEFAULT = 9001
+# default PORT=9001
 PORT=
 
 # apikey needed for musixmatch API
@@ -6,3 +6,9 @@ MUSIXMATCH_APIKEY=
 
 # path
 ORIGIN=
+
+# default NODE_ENV=local
+NODE_ENV=
+
+# default API_KEY=test_key
+API_KEY = 

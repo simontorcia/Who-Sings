@@ -9,74 +9,83 @@ import {
 import Logger from '../shared/logger.lib'
 
 const getRelatedArtistNameList = async (track: ITrack): Promise<string[]> => {
-  const { artist_id } = track
-  Logger.debug(
-    `ArtistHelper :: getRelatedArtistNameList :: START artist_id: ${artist_id}`
-  )
+  try {
+    const { artist_id } = track
+    Logger.debug(
+      `ArtistHelper :: getRelatedArtistNameList :: START artist_id: ${artist_id}`
+    )
 
-  let related_artist_list = await artistService.getRelatedArtistNameList(
-    artist_id
-  )
+    let related_artist_list = await artistService.getRelatedArtistNameList(
+      artist_id
+    )
 
-  if (
-    !related_artist_list ||
-    related_artist_list.length < RELATED_ARTIST_LIST_SIZE
-  ) {
+    if (
+      !related_artist_list ||
+      related_artist_list.length < RELATED_ARTIST_LIST_SIZE
+    ) {
+      related_artist_list = await getRelatedArtistListFromApi(artist_id)
+    }
+
+    const random_related_artist_name_list =
+      shuffleRelatedArtistNameList(related_artist_list)
+
+    Logger.debug(
+      `ArtistHelper :: getRelatedArtistNameList :: END random_related_artist_name_list: ${JSON.stringify(
+        random_related_artist_name_list
+      )}`
+    )
+    return random_related_artist_name_list
+  } catch (err) {
+    Logger.error(`ArtistHelper :: getRelatedArtistNameList :: ERR: ${err}`)
+    throw err
+  }
+}
+
+const getRelatedArtistListFromApi = async (
+  artist_id: number
+): Promise<string[]> => {
+  try {
+    Logger.debug(
+      `ArtistHelper :: getRelatedArtistListFromApi :: START artist_id: ${artist_id}`
+    )
     const new_related_artist_list =
       await musixmatchService.getRelatedArtistList(artist_id)
 
     if (!new_related_artist_list) {
-      // Logger.error(
-      //   `ArtistHelper :: getRelatedArtistNameList :: new_related_artist_list`
-      // )
-      throw new Error(
-        'ARTIST_HELPER::GET_RELATED_ARTIST_NAME_LIST::ERROR_NEW_RELATED_LIST'
-      )
+      return []
     }
-    const saved_related_artist_list = await artistService.createArtistList(
+
+    await artistService.createArtistList(new_related_artist_list)
+
+    const names_related_artist_list = getArtistNameFromArtist(
       new_related_artist_list
     )
 
-    let new_names_related_artist_list = getArtistNameFromArtist(
-      new_related_artist_list
-    )
-
-    if (new_names_related_artist_list.length > 0) {
-      // salvataggio sul DB
+    if (names_related_artist_list.length > 0) {
+      // save related into DB
       await artistService.addRelatedArtistList(
         artist_id,
-        new_names_related_artist_list
+        names_related_artist_list
       )
     }
 
-    if (new_names_related_artist_list.length < 2) {
+    if (names_related_artist_list.length < 2) {
       const random_artist_list = await artistService.getRandomArtistList(
-        RELATED_ARTIST_LIST_SIZE - new_names_related_artist_list.length,
+        RELATED_ARTIST_LIST_SIZE - names_related_artist_list.length,
         artist_id
       )
 
       if (!random_artist_list) {
-        throw new Error(
-          'ARTIST_HELPER::GET_RELATED_ARTIST_NAME_LIST::ERROR_RANDOM_ARTIST_LIST'
-        )
+        return []
       }
 
-      new_names_related_artist_list = [
-        ...getArtistNameFromArtist(random_artist_list),
-      ]
+      return getArtistNameFromArtist(random_artist_list)
     }
-    related_artist_list = [...new_names_related_artist_list]
+    return names_related_artist_list
+  } catch (err) {
+    Logger.error(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
+    throw err
   }
-
-  const random_related_artist_name_list =
-    shuffleRelatedArtistNameList(related_artist_list)
-
-  Logger.debug(
-    `ArtistHelper :: getRelatedArtistNameList :: END random_related_artist_name_list: ${JSON.stringify(
-      random_related_artist_name_list
-    )}`
-  )
-  return random_related_artist_name_list
 }
 
 const createArtistListFromTrackList = async (track_list: ITrack[]) => {
@@ -96,7 +105,6 @@ const createArtistListFromTrackList = async (track_list: ITrack[]) => {
   try {
     await artistService.createArtistList(to_save_artist_list)
   } catch (err) {
-    console.log(`TRACK_HELPER::CREATE_ARTIST_LIST_FROM_TRACK_LIST::ERR: ${err}`)
     Logger.error(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
     throw err
   }
@@ -113,25 +121,32 @@ const shuffleRelatedArtistNameList = (related_artist_list: string[]) => {
 }
 
 const getLazyArtistNameList = async (track: ITrack): Promise<string[]> => {
-  Logger.debug(`ArtistHelper :: getLazyArtistNameList :: START track: ${JSON.stringify(track)}`)
-
-  const random_artist_list = await artistService.getRandomArtistList(
-    RELATED_ARTIST_LIST_SIZE,
-    track.artist_id
-  )
-
-  if (!random_artist_list) {
-    throw new Error(
-      'ARTIST_HELPER::GET_LAZY_ARTIST_NAME_LIST::ERROR_NEW_RELATED_LIST'
+  try {
+    Logger.debug(
+      `ArtistHelper :: getLazyArtistNameList :: START track: ${JSON.stringify(
+        track
+      )}`
     )
+
+    const random_artist_list = await artistService.getRandomArtistList(
+      RELATED_ARTIST_LIST_SIZE,
+      track.artist_id
+    )
+
+    if (!random_artist_list) {
+      return []
+    }
+    const lazy_artist_list = [...getArtistNameFromArtist(random_artist_list)]
+    Logger.debug(
+      `ArtistHelper :: getLazyArtistNameList :: END lazy_artist_list: ${JSON.stringify(
+        lazy_artist_list
+      )}`
+    )
+    return lazy_artist_list
+  } catch (err) {
+    Logger.error(`ArtistHelper :: getLazyArtistNameList :: ERR: ${err}`)
+    throw err
   }
-  const lazy_artist_list = [...getArtistNameFromArtist(random_artist_list)]
-  Logger.debug(
-    `ArtistHelper :: getLazyArtistNameList :: END lazy_artist_list: ${JSON.stringify(
-      lazy_artist_list
-    )}`
-  )
-  return lazy_artist_list
 }
 
 export const artistHelper = {

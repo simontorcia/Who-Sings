@@ -1,4 +1,4 @@
-import express, { Application } from 'express'
+import express from 'express'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -7,7 +7,7 @@ import gameRouter from './routes/game.routes'
 import playerRouter from './routes/player.routes'
 
 class App {
-  public app: Application
+  public app: express.Application
 
   constructor() {
     this.app = express()
@@ -16,8 +16,6 @@ class App {
     mongoConnection.setConfig()
     mongoConnection.disconnect()
   }
-
-  // app.locals.baseURL = process.env.ORIGIN
 
   private setConfig() {
     //Allows us to receive requests with data in json format

@@ -1,5 +1,6 @@
 export interface IStartGameRequest {
   game_size: number
+  url: string
 }
 
 export interface IStartGameResponseItem {
