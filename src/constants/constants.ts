@@ -1,4 +1,5 @@
 export const PORT = 9001
+export const ORIGIN = process.env.ORIGIN || 'localhost'
 export const PLAYED_INIT_VALUE = 0
 
 export const RELATED_ARTIST_LIST_START = 0
