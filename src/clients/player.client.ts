@@ -20,7 +20,7 @@ const getHighScores = async (
   const high_scores = await playerService.getHighScores(player_name)
 
   if (!high_scores) {
-    throw new Error('PLAYER_CLIENT::GET_HIGH_SCORES::HIGH_SCORES_NULL')
+    throw new Error(`Error getting high_scores for user ${player_name}`)
   }
 
   const result = {

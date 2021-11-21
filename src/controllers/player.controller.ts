@@ -4,6 +4,7 @@ import { validationResult } from 'express-validator'
 import {
   STATUS_BAD_REQUEST,
   STATUS_INTERNAL_ERROR,
+  STATUS_NOT_FOUND,
 } from '../constants/http.status.constants'
 import {
   GET_HIGH_SCORE,
@@ -31,6 +32,12 @@ const getHighScores = async (req: Request, res: Response) => {
     const high_scores_response = await playerClient.getHighScores({
       player_name: '' + player_name,
     })
+
+    if (high_scores_response.high_scores.length === 0) {
+      return res.status(STATUS_NOT_FOUND).json({
+        message: `${GET_HIGH_SCORE.STATUS_NOT_FOUND_MESSAGE} ${player_name}`,
+      })
+    }
 
     Logger.debug(
       `PlayerController :: getHighScores :: END high_scores_response:${JSON.stringify(
