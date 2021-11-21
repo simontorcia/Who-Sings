@@ -9,7 +9,7 @@ JavaScript Engineer Test
 - run `docker-compose up` for start application
 - run `docker-compose down` for stop application
 
-- run `npm test` for start tests
 - run `npm start` for start application
+- run `npm test` for start tests
 
-- check api documentation into `api_doc` folder
+- check api docs into `api_doc` folder
