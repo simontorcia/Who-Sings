@@ -4,6 +4,7 @@ export const GET_HIGH_SCORE = {
   PLAYER_NAME_REQUIRED: 'player_name is required',
   PLAYER_NAME_WRONG_TYPE: 'player_name must be a string',
   RESPONSE_GENERIC_ERROR: 'ERROR GETTING THE HIGH SCORES, PLEASE RETRY',
+  STATUS_NOT_FOUND_MESSAGE:'No scores found for user: '
 }
 
 export const GET_LEADERBOARD = {
