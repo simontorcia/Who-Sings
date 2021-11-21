@@ -7,6 +7,7 @@ export const musixmatchServiceStub = {
       artist_id: 10,
       artist_name: 'artist_name_01',
       played: 0,
+      snippet: 'test_01',
     },
     {
       page: '49',
@@ -15,6 +16,7 @@ export const musixmatchServiceStub = {
       artist_id: 20,
       artist_name: 'artist_name_02',
       played: 0,
+      snippet: 'test_02',
     },
     {
       page: '49',
@@ -23,6 +25,7 @@ export const musixmatchServiceStub = {
       artist_id: 30,
       artist_name: 'artist_name_03',
       played: 0,
+      snippet: 'test_03',
     },
     {
       page: '49',
@@ -31,6 +34,7 @@ export const musixmatchServiceStub = {
       artist_id: 40,
       artist_name: 'artist_name_04',
       played: 0,
+      snippet: 'test_04',
     },
     {
       page: '49',
@@ -39,6 +43,7 @@ export const musixmatchServiceStub = {
       artist_id: 50,
       artist_name: 'artist_name_05',
       played: 0,
+      snippet: 'test_05',
     },
   ],
   getSnippetByTrackId: { snippet_body: 'But I hope they live forever' },
