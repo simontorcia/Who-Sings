@@ -55,10 +55,10 @@ const checkOnTrackSnippet = (track: ITrack): boolean => {
 }
 
 const createTrackList = async (game_size: number, random_page: string) => {
-  Logger.debug(
-    `TrackHelper :: createTrackList :: START game_size:${game_size} and random_page:${random_page}`
-  )
   try {
+    Logger.debug(
+      `TrackHelper :: createTrackList :: START game_size:${game_size} and random_page:${random_page}`
+    )
     const api_track_list = await musixmatchService.getTrackList(
       random_page,
       game_size

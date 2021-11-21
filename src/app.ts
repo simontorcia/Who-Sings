@@ -17,8 +17,6 @@ class App {
     mongoConnection.disconnect()
   }
 
-  // app.locals.baseURL = process.env.ORIGIN
-
   private setConfig() {
     //Allows us to receive requests with data in json format
     this.app.use(bodyParser.json({ limit: '50mb' }))
