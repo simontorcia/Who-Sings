@@ -128,7 +128,7 @@ const getUpdatedTrackList = async (
     }
     return track_list
   } catch (err) {
-    Logger.error(`ArtistHelper :: getUpdatedTrackList :: ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: getUpdatedTrackList :: ERR: ${err}`)
     throw err
   }
 }
@@ -163,7 +163,7 @@ const getValidTrackList = async (game_size: number): Promise<ITrack[]> => {
     )
     return db_valid_track_list
   } catch (err) {
-    Logger.error(`ArtistHelper :: getValidTrackList :: ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: getValidTrackList :: ERR: ${err}`)
     throw err
   }
 }
@@ -189,7 +189,7 @@ const getUpdatedBySnippetTrack = async (
     )
     return !checkOnTrackSnippet(track) ? await addSnippetToTrack(track) : track
   } catch (err) {
-    console.log(`TRACK_HELPER::GET_UPDATED_BY_SNIPPET_TRACK::ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: getUpdatedBySnippetTrack :: ERR: ${err}`)
     throw err
   }
 }

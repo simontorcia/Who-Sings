@@ -36,7 +36,7 @@ const getRelatedArtistNameList = async (track: ITrack): Promise<string[]> => {
     )
     return random_related_artist_name_list
   } catch (err) {
-    Logger.error(`ArtistHelper :: getRelatedArtistNameList :: ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: getRelatedArtistNameList :: ERR: ${err}`)
     throw err
   }
 }
@@ -83,7 +83,7 @@ const getRelatedArtistListFromApi = async (
     }
     return names_related_artist_list
   } catch (err) {
-    Logger.error(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
     throw err
   }
 }
@@ -105,7 +105,7 @@ const createArtistListFromTrackList = async (track_list: ITrack[]) => {
   try {
     await artistService.createArtistList(to_save_artist_list)
   } catch (err) {
-    Logger.error(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
     throw err
   }
 }
@@ -144,7 +144,7 @@ const getLazyArtistNameList = async (track: ITrack): Promise<string[]> => {
     )
     return lazy_artist_list
   } catch (err) {
-    Logger.error(`ArtistHelper :: getLazyArtistNameList :: ERR: ${err}`)
+    Logger.debug(`ArtistHelper :: getLazyArtistNameList :: ERR: ${err}`)
     throw err
   }
 }

@@ -1,5 +1,6 @@
 import { MONGO } from './mongo.config'
 import mongoose from 'mongoose'
+import Logger from '../../shared/logger.lib'
 
 const setConfig = (): void => {
   mongoose.Promise = global.Promise
@@ -16,7 +17,7 @@ const disconnect = () => {
   // If the Node process ends, close the Mongoose connection
   process.on('SIGINT', function () {
     mongoose.connection.close(function () {
-      console.log('Mongoose disconnected on app termination')
+      Logger.debug(`MongoConnection :: disconnect `)
       process.exit(0)
     })
   })
