@@ -1,6 +1,7 @@
 import Logger from '../shared/logger.lib'
 import { IArtist } from '../interfaces/artist.type'
 import Artist from '../models/artist.model'
+import { MONGO_DB_STRING_TYPE } from '../constants/constants'
 
 const createArtistList = async (artist_list: IArtist[]) => {
   Logger.debug(`ArtistSevice :: createArtistList :: START`)
@@ -62,7 +63,7 @@ const getRandomArtistList = async (
       {
         $match: {
           artist_id: { $ne: artist_id },
-          artist_name: { $exists: true, $type: 2 },
+          artist_name: { $exists: true, $type: MONGO_DB_STRING_TYPE }, // type 2 string
         },
       },
       { $sample: { size } },

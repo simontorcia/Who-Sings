@@ -4,7 +4,7 @@ import { musixmatchService } from '../external_services/musixmatch/musixmatch.se
 import { artistService } from '../services/artist.service'
 import {
   RELATED_ARTIST_LIST_SIZE,
-  RELATED_ARTIST_LIST_START,
+  RELATED_ARTIST_LIST_START_SIZE,
 } from '../constants/constants'
 import Logger from '../shared/logger.lib'
 
@@ -61,7 +61,7 @@ const getRelatedArtistListFromApi = async (
       new_related_artist_list
     )
 
-    if (names_related_artist_list.length > 0) {
+    if (names_related_artist_list.length > RELATED_ARTIST_LIST_START_SIZE) {
       // save related into DB
       await artistService.addRelatedArtistListToArtist(
         artist_id,
@@ -69,7 +69,7 @@ const getRelatedArtistListFromApi = async (
       )
     }
 
-    if (names_related_artist_list.length < 2) {
+    if (names_related_artist_list.length < RELATED_ARTIST_LIST_SIZE) {
       const random_artist_list = await artistService.getRandomArtistList(
         RELATED_ARTIST_LIST_SIZE - names_related_artist_list.length,
         artist_id
@@ -117,7 +117,7 @@ const getArtistNameFromArtist = (artist_list: IArtist[]): string[] => {
 const shuffleRelatedArtistNameList = (related_artist_list: string[]) => {
   return related_artist_list
     .sort(() => Math.random() - Math.random())
-    .slice(RELATED_ARTIST_LIST_START, RELATED_ARTIST_LIST_SIZE) // 0 -> 2
+    .slice(RELATED_ARTIST_LIST_START_SIZE, RELATED_ARTIST_LIST_SIZE) // 0 -> 2
 }
 
 const getLazyArtistNameList = async (track: ITrack): Promise<string[]> => {

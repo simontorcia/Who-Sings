@@ -5,6 +5,9 @@ import {
   PLAYED_INIT_VALUE,
   VALID_TRACK_LIST_LIMIT,
   SNIPPET_DB_DIRECTION,
+  PLAYED_INC_VALUE,
+  PLAYED_LIMIT_VALUE,
+  PLAYED_SORT_VALUE,
 } from '../constants/constants'
 import Logger from '../shared/logger.lib'
 
@@ -57,7 +60,7 @@ const updateManyPlayed = async (track_list: ITrack[]) => {
       track_list.map((track) => ({
         updateOne: {
           filter: { track_id: track.track_id },
-          update: { $inc: { played: 1 } },
+          update: { $inc: { played: PLAYED_INC_VALUE } },
           upsert: true,
         },
       }))
@@ -74,7 +77,7 @@ const updateOnePlayed = async (track: ITrack): Promise<ITrack | null> => {
   try {
     return Track.findByIdAndUpdate(
       track._id,
-      { $inc: { played: 1 } },
+      { $inc: { played: PLAYED_INC_VALUE } },
       { new: true }
     )
   } catch (err) {
@@ -121,8 +124,8 @@ const getMinPlayed = async (): Promise<number | null> => {
     track_list = [
       ...track_list,
       ...(await Track.find({ track_id: { $exists: true } })
-        .sort({ played: 1 })
-        .limit(1)),
+        .sort({ played: PLAYED_SORT_VALUE })
+        .limit(PLAYED_LIMIT_VALUE)),
     ]
 
     if (track_list.length > 0) {
