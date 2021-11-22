@@ -1,13 +1,12 @@
 import { Router } from 'express'
-import { playerController } from '../controllers/player.controller'
-import { authMiddleware } from '../middleware/auth'
+import { playerModule }  from './player.module'
+import { authMiddleware } from '../../middleware/auth'
 import { body, query } from 'express-validator'
 import {
   GET_HIGH_SCORE,
-  GET_LEADERBOARD,
   SAVE_SCORE,
   SAVE_SCORE_SIZE_CUSTOM,
-} from '../constants/validator.constant'
+} from '../../constants/validator.constant'
 
 export class PlayerRouter {
   router: Router
@@ -39,7 +38,7 @@ export class PlayerRouter {
             value <= SAVE_SCORE.MAX_VALUE && value >= SAVE_SCORE.MIN_VALUE
         )
         .withMessage(SAVE_SCORE_SIZE_CUSTOM),
-      playerController.saveScore
+      playerModule.controller.saveScore
     )
     this.router.get(
       '/high-scores',
@@ -51,12 +50,12 @@ export class PlayerRouter {
         .withMessage(GET_HIGH_SCORE.PLAYER_NAME_REQUIRED)
         .isString()
         .withMessage(GET_HIGH_SCORE.PLAYER_NAME_WRONG_TYPE),
-      playerController.getHighScores
+      playerModule.controller.getHighScores
     )
     this.router.get(
       '/leaderboard',
       authMiddleware.checkApiKey,
-      playerController.getLeaderboard
+      playerModule.controller.getLeaderboard
     )
   }
 }

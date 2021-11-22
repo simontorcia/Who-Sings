@@ -3,8 +3,8 @@ import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { mongoConnection } from './config/mongo/mongo.connections'
-import gameRouter from './routes/game.routes'
-import playerRouter from './routes/player.routes'
+import gameRouter from './modules/game/game.routes'
+import playerRouter from './modules/player/player.routes'
 
 class App {
   public app: express.Application

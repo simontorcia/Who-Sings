@@ -1,6 +1,6 @@
-import { PLAYED_INIT_VALUE } from '../constants/constants'
+import { PLAYED_INIT_VALUE } from '../../constants/constants'
 import { model, Schema } from 'mongoose'
-import { ITrack } from '../interfaces/track.type'
+import { ITrack } from './track.type'
 
 export const TrackSchema = new Schema(
   {

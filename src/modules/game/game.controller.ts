@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import { gameClient } from '../clients/game.client'
 import { validationResult } from 'express-validator'
 import {
   STATUS_BAD_REQUEST,
   STATUS_INTERNAL_ERROR,
-} from '../constants/http.status.constants'
-import Logger from '../shared/logger.lib'
-import { START_GAME } from '../constants/validator.constant'
+} from '../../constants/http.status.constants'
+import Logger from '../../shared/logger.lib'
+import { START_GAME } from '../../constants/validator.constant'
+import { gameModule } from './game.module'
 
 const startGame = async (req: Request, res: Response) => {
   Logger.debug(`GameController :: startGame :: START`)
@@ -24,7 +24,7 @@ const startGame = async (req: Request, res: Response) => {
     const url = req.url
     const { game_size } = req.body
 
-    const game = await gameClient.startGame({
+    const game = await gameModule.client.startGame({
       game_size,
       url,
     })
