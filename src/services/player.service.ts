@@ -65,13 +65,16 @@ const getLeaderboard = async (): Promise<
   IGetLeaderboardItemResponse[] | null
 > => {
   Logger.debug(`PlayerService :: getLeaderboard :: START`)
-  let leaderboard = []
+  let leaderboard: IGetLeaderboardItemResponse[] = []
   try {
-    leaderboard = await Player.aggregate([
-      { $unset: ['_id', 'scores'] },
-      { $sort: { max_score: GET_LEADERDBOARD_SORT_DIRECTION } },
-      { $limit: GET_LEADERDBOARD_LIMIT },
-    ])
+    leaderboard = [
+      ...leaderboard,
+      ...(await Player.aggregate([
+        { $unset: ['_id', 'scores'] },
+        { $sort: { max_score: GET_LEADERDBOARD_SORT_DIRECTION } },
+        { $limit: GET_LEADERDBOARD_LIMIT },
+      ])),
+    ]
     return leaderboard
   } catch (err) {
     Logger.error(`PlayerService :: getLeaderboard :: Err:${err}`)

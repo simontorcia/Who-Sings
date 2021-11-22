@@ -84,7 +84,7 @@ const getRelatedArtistNameList = async (
     }).select('related_artist_names')
 
     if (artist) {
-      name_list = artist.related_artist_names
+      name_list = [...name_list, ...artist.related_artist_names]
     }
     return name_list
   } catch (err) {

@@ -116,11 +116,14 @@ const getUsedPages = async (): Promise<string[] | null> => {
 const getMinPlayed = async (): Promise<number | null> => {
   Logger.debug(`TrackService :: getMinPlayed :: START`)
   try {
-    let track_list = []
+    let track_list: ITrack[] = []
     let played = PLAYED_INIT_VALUE
-    track_list = await Track.find({ track_id: { $exists: true } })
-      .sort({ played: 1 })
-      .limit(1)
+    track_list = [
+      ...track_list,
+      ...(await Track.find({ track_id: { $exists: true } })
+        .sort({ played: 1 })
+        .limit(1)),
+    ]
 
     if (track_list.length > 0) {
       played = track_list[0].played
