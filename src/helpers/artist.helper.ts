@@ -63,7 +63,7 @@ const getRelatedArtistListFromApi = async (
 
     if (names_related_artist_list.length > 0) {
       // save related into DB
-      await artistService.addRelatedArtistList(
+      await artistService.addRelatedArtistListToArtist(
         artist_id,
         names_related_artist_list
       )
