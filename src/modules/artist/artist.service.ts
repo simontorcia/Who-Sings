@@ -1,7 +1,7 @@
-import Logger from '../shared/logger.lib'
-import { IArtist } from '../interfaces/artist.type'
-import Artist from '../models/artist.model'
-import { MONGO_DB_STRING_TYPE } from '../constants/constants'
+import Logger from '../../shared/logger.lib'
+import { IArtist } from './artist.type'
+import { artistModule } from './artist.module'
+import { MONGO_DB_STRING_TYPE } from '../../constants/constants'
 
 const createArtistList = async (artist_list: IArtist[]) => {
   Logger.debug(`ArtistSevice :: createArtistList :: START`)
@@ -10,7 +10,7 @@ const createArtistList = async (artist_list: IArtist[]) => {
     return artist_list
   }
   try {
-    return Artist.bulkWrite(
+    return artistModule.model.bulkWrite(
       artist_list.map((artist) => ({
         updateOne: {
           filter: { artist_id: artist.artist_id },
@@ -30,7 +30,7 @@ const createArtistList = async (artist_list: IArtist[]) => {
 const getArtist = async (artist_id: number): Promise<IArtist | null> => {
   Logger.debug(`ArtistSevice :: getArtist :: START`)
   try {
-    return Artist.findOne({ artist_id })
+    return artistModule.model.findOne({ artist_id })
   } catch (err) {
     Logger.error(`ArtistSevice :: getArtist :: Err:${err}`)
     throw new Error(
@@ -45,7 +45,10 @@ const addRelatedArtistListToArtist = async (
 ): Promise<IArtist | null> => {
   Logger.debug(`ArtistSevice :: addRelatedArtistListToArtist :: START`)
   try {
-    return Artist.findOneAndUpdate({ artist_id }, { related_artist_names })
+    return artistModule.model.findOneAndUpdate(
+      { artist_id },
+      { related_artist_names }
+    )
   } catch (err) {
     Logger.error(`ArtistSevice :: addRelatedArtistListToArtist :: Err:${err}`)
     throw new Error(`ARTIST_SERVICE::ADD_RELATED_ARTIST_LIST::ERROR`)
@@ -58,7 +61,7 @@ const getRandomArtistList = async (
 ): Promise<IArtist[] | null> => {
   Logger.debug(`ArtistSevice :: getRandomArtistList :: START`)
   try {
-    return Artist.aggregate([
+    return artistModule.model.aggregate([
       // { $match: { artist_id: { $ne: artist_id }, $and :[{"artist_id":{"$ne":""}},{"artist_id":{"$ne":null}}] } },
       {
         $match: {
@@ -80,9 +83,11 @@ const getRelatedArtistNameList = async (
   Logger.debug(`ArtistSevice :: getRelatedArtistNameList :: START`)
   let name_list: string[] = []
   try {
-    const artist = await Artist.findOne({
-      artist_id,
-    }).select('related_artist_names')
+    const artist = await artistModule.model
+      .findOne({
+        artist_id,
+      })
+      .select('related_artist_names')
 
     if (artist) {
       name_list = [...name_list, ...artist.related_artist_names]

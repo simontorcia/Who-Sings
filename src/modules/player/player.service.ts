@@ -1,13 +1,13 @@
-import Player from '../models/player.model'
-import { IGetLeaderboardItemResponse, IPlayer } from '../interfaces/player.type'
+import { IGetLeaderboardItemResponse, IPlayer } from './player.type'
 import {
   GET_LEADERDBOARD_SORT_DIRECTION,
   GET_LEADERDBOARD_LIMIT,
   NEW_SCORES_SORT_DIRECTION,
   GET_HIGH_SCORES_HIGH_SCORES_LIMIT,
   GET_HIGH_SCORES_SCORES_SORT_DIRECTION,
-} from '../constants/constants'
-import Logger from '../shared/logger.lib'
+} from '../../constants/constants'
+import Logger from '../../shared/logger.lib'
+import { playerModule } from './player.module'
 
 const upsertPlayer = async (
   name: string,
@@ -15,7 +15,7 @@ const upsertPlayer = async (
 ): Promise<IPlayer | null> => {
   Logger.debug(`PlayerService :: upsertPlayer :: START`)
   try {
-    const player = await Player.findOneAndUpdate(
+    const player = await playerModule.model.findOneAndUpdate(
       { name },
       {
         $push: {
@@ -42,7 +42,7 @@ const updateMaxScore = async (
 ): Promise<IPlayer | null> => {
   Logger.debug(`PlayerService :: updateMaxScore :: START`)
   try {
-    return Player.findOneAndUpdate({ name }, { max_score: score })
+    return playerModule.model.findOneAndUpdate({ name }, { max_score: score })
   } catch (err) {
     Logger.error(`PlayerService :: updateMaxScore :: Err:${err}`)
     throw new Error(`ERROR ON UPDATE MAX SCORE`)
@@ -53,9 +53,11 @@ const getHighScores = async (name: string): Promise<number[] | null> => {
   Logger.debug(`PlayerService :: getHighScores :: START`)
   let high_scores: number[] = []
   try {
-    const player = await Player.findOne({ name }, 'scores', {
-      sort: { scores: GET_HIGH_SCORES_SCORES_SORT_DIRECTION },
-    }).limit(GET_HIGH_SCORES_HIGH_SCORES_LIMIT)
+    const player = await playerModule.model
+      .findOne({ name }, 'scores', {
+        sort: { scores: GET_HIGH_SCORES_SCORES_SORT_DIRECTION },
+      })
+      .limit(GET_HIGH_SCORES_HIGH_SCORES_LIMIT)
     if (player) {
       high_scores = [...high_scores, ...player.scores]
     }
@@ -74,7 +76,7 @@ const getLeaderboard = async (): Promise<
   try {
     leaderboard = [
       ...leaderboard,
-      ...(await Player.aggregate([
+      ...(await playerModule.model.aggregate([
         { $unset: ['_id', 'scores'] },
         { $sort: { max_score: GET_LEADERDBOARD_SORT_DIRECTION } },
         { $limit: GET_LEADERDBOARD_LIMIT },

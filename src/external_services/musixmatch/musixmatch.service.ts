@@ -8,11 +8,11 @@ import {
 import { ITrackListResponse } from './interfaces/get_tracks.interface'
 import { IRelatedArtistListResponse } from './interfaces/get_related_artists.interface'
 import { musixmatchApiMapper } from './mappers/get_tracks.mapper'
-import { ITrack } from '../../interfaces/track.type'
+import { ITrack } from '../../modules/track/track.type'
 import { ERROR_NOT_VALID_SNIPPET } from '../../constants/constants'
 import { STATUS_SUCCESS } from '../../constants/http.status.constants'
 import Logger from '../../shared/logger.lib'
-import { IArtist } from 'interfaces/artist.type'
+import { IArtist } from '../../modules/artist/artist.type'
 
 const getTrackList = async (
   page: string,

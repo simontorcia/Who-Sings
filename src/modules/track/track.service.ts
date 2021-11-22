@@ -1,5 +1,5 @@
-import Track from '../models/track.model'
-import { ITrack } from '../interfaces/track.type'
+import { trackModule } from './track.module'
+import { ITrack } from './track.type'
 import {
   ERROR_NOT_VALID_SNIPPET,
   PLAYED_INIT_VALUE,
@@ -8,8 +8,8 @@ import {
   PLAYED_INC_VALUE,
   PLAYED_LIMIT_VALUE,
   PLAYED_SORT_VALUE,
-} from '../constants/constants'
-import Logger from '../shared/logger.lib'
+} from '../../constants/constants'
+import Logger from '../../shared/logger.lib'
 
 const createTrackList = async (track_list: ITrack[]) => {
   Logger.debug(`TrackService :: createTrackList :: START`)
@@ -17,7 +17,7 @@ const createTrackList = async (track_list: ITrack[]) => {
     if (track_list.length === 0) {
       return []
     }
-    return Track.bulkWrite(
+    return trackModule.model.bulkWrite(
       track_list.map((track) => ({
         updateOne: {
           filter: { track_id: track.track_id },
@@ -36,9 +36,10 @@ const createTrackList = async (track_list: ITrack[]) => {
 const getValidTrackList = async (played: number): Promise<ITrack[] | null> => {
   Logger.debug(`TrackService :: getValidTrackList :: START played:${played}`)
   try {
-    return Track.aggregate([
-      { $match: { snippet: { $ne: ERROR_NOT_VALID_SNIPPET }, played } },
-    ]) // CHECK SE INDICIZZARE QUESTO FLAG => OTTIMIZZARE RICERCA SU QUESTA COLONNA (INDEX)
+    return trackModule.model
+      .aggregate([
+        { $match: { snippet: { $ne: ERROR_NOT_VALID_SNIPPET }, played } },
+      ]) // CHECK SE INDICIZZARE QUESTO FLAG => OTTIMIZZARE RICERCA SU QUESTA COLONNA (INDEX)
       .sort({
         snippet: SNIPPET_DB_DIRECTION,
       })
@@ -56,7 +57,7 @@ const updateManyPlayed = async (track_list: ITrack[]) => {
     return track_list
   }
   try {
-    return Track.bulkWrite(
+    return trackModule.model.bulkWrite(
       track_list.map((track) => ({
         updateOne: {
           filter: { track_id: track.track_id },
@@ -75,7 +76,7 @@ const updateOnePlayed = async (track: ITrack): Promise<ITrack | null> => {
   Logger.debug(`TrackService :: updateOnePlayed :: START`)
 
   try {
-    return Track.findByIdAndUpdate(
+    return trackModule.model.findByIdAndUpdate(
       track._id,
       { $inc: { played: PLAYED_INC_VALUE } },
       { new: true }
@@ -96,7 +97,11 @@ const addSnippetIntoTrack = async (
     if (!snippet) {
       return null
     }
-    return Track.findByIdAndUpdate(track._id, { snippet }, { new: true })
+    return trackModule.model.findByIdAndUpdate(
+      track._id,
+      { snippet },
+      { new: true }
+    )
   } catch (err) {
     Logger.error(`TrackService :: addSnippetIntoTrack :: Err:${err}`)
     throw new Error(
@@ -109,7 +114,7 @@ const getUsedPages = async (): Promise<string[] | null> => {
   Logger.debug(`TrackService :: getUsedPages :: START`)
 
   try {
-    return Track.find().distinct('page')
+    return trackModule.model.find().distinct('page')
   } catch (err) {
     Logger.error(`TrackService :: getUsedPages :: Err:${err}`)
     throw new Error(`ERROR GETTING PAGES`)
@@ -123,7 +128,8 @@ const getMinPlayed = async (): Promise<number | null> => {
     let played = PLAYED_INIT_VALUE
     track_list = [
       ...track_list,
-      ...(await Track.find({ track_id: { $exists: true } })
+      ...(await trackModule.model
+        .find({ track_id: { $exists: true } })
         .sort({ played: PLAYED_SORT_VALUE })
         .limit(PLAYED_LIMIT_VALUE)),
     ]
