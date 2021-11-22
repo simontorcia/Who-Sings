@@ -14,7 +14,9 @@ import Logger from '../shared/logger.lib'
 
 const addSnippetToTrack = async (track: ITrack): Promise<ITrack | null> => {
   try {
-    Logger.debug(`TrackHelper :: addSnippetToTrack :: START track:${track}`)
+    Logger.debug(
+      `TrackHelper :: addSnippetToTrack :: START track:${JSON.stringify(track)}`
+    )
 
     const snippet = await musixmatchService.getSnippetByTrackId(track.track_id)
 
@@ -185,7 +187,9 @@ const getUpdatedBySnippetTrack = async (
 ): Promise<ITrack | null> => {
   try {
     Logger.debug(
-      `TrackHelper :: getUpdatedBySnippetTrack :: START track:${track}`
+      `TrackHelper :: getUpdatedBySnippetTrack :: START track:${JSON.stringify(
+        track
+      )}`
     )
     return !checkOnTrackSnippet(track) ? await addSnippetToTrack(track) : track
   } catch (err) {
