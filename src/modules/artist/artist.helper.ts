@@ -1,12 +1,12 @@
-import { IArtist } from '../interfaces/artist.type'
-import { ITrack } from '../interfaces/track.type'
-import { musixmatchService } from '../external_services/musixmatch/musixmatch.service'
-import { artistService } from '../services/artist.service'
+import { IArtist } from './artist.type'
+import { ITrack } from '../track/track.type'
+import { musixmatchService } from '../../external_services/musixmatch/musixmatch.service'
+import { artistModule } from './artist.module'
 import {
   RELATED_ARTIST_LIST_SIZE,
   RELATED_ARTIST_LIST_START_SIZE,
-} from '../constants/constants'
-import Logger from '../shared/logger.lib'
+} from '../../constants/constants'
+import Logger from '../../shared/logger.lib'
 
 const getRelatedArtistNameList = async (track: ITrack): Promise<string[]> => {
   try {
@@ -15,9 +15,8 @@ const getRelatedArtistNameList = async (track: ITrack): Promise<string[]> => {
       `ArtistHelper :: getRelatedArtistNameList :: START artist_id: ${artist_id}`
     )
 
-    let related_artist_list = await artistService.getRelatedArtistNameList(
-      artist_id
-    )
+    let related_artist_list =
+      await artistModule.service.getRelatedArtistNameList(artist_id)
 
     if (
       !related_artist_list ||
@@ -55,7 +54,7 @@ const getRelatedArtistListFromApi = async (
       return []
     }
 
-    await artistService.createArtistList(new_related_artist_list)
+    await artistModule.service.createArtistList(new_related_artist_list)
 
     const names_related_artist_list = getArtistNameFromArtist(
       new_related_artist_list
@@ -63,14 +62,14 @@ const getRelatedArtistListFromApi = async (
 
     if (names_related_artist_list.length > RELATED_ARTIST_LIST_START_SIZE) {
       // save related into DB
-      await artistService.addRelatedArtistListToArtist(
+      await artistModule.service.addRelatedArtistListToArtist(
         artist_id,
         names_related_artist_list
       )
     }
 
     if (names_related_artist_list.length < RELATED_ARTIST_LIST_SIZE) {
-      const random_artist_list = await artistService.getRandomArtistList(
+      const random_artist_list = await artistModule.service.getRandomArtistList(
         RELATED_ARTIST_LIST_SIZE - names_related_artist_list.length,
         artist_id
       )
@@ -103,7 +102,7 @@ const createArtistListFromTrackList = async (track_list: ITrack[]) => {
     })
   }
   try {
-    await artistService.createArtistList(to_save_artist_list)
+    await artistModule.service.createArtistList(to_save_artist_list)
   } catch (err) {
     Logger.debug(`ArtistHelper :: createArtistListFromTrackList :: ERR: ${err}`)
     throw err
@@ -128,7 +127,7 @@ const getLazyArtistNameList = async (track: ITrack): Promise<string[]> => {
       )}`
     )
 
-    const random_artist_list = await artistService.getRandomArtistList(
+    const random_artist_list = await artistModule.service.getRandomArtistList(
       RELATED_ARTIST_LIST_SIZE,
       track.artist_id
     )

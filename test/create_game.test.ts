@@ -1,12 +1,11 @@
-import { gameClient } from '../src/clients/game.client'
-import { trackService } from '../src/services/track.service'
+import { gameModule } from '../src/modules/game/game.module'
+import { trackModule } from '../src/modules/track/track.module'
+import { artistModule } from '../src/modules/artist/artist.module'
 import { musixmatchService } from '../src/external_services/musixmatch/musixmatch.service'
 import * as sinon from 'sinon'
 import nock from 'nock'
 import { musixmatchServiceStub } from './stubs/musixmatch_service'
-import { artistService } from '../src/services/artist.service'
 import { assert } from 'chai'
-import { trackHelper } from '../src/helpers/track.helper'
 import { artistServiceStub, trackServiceStub } from './stubs/db'
 
 describe('Controller::gameController', () => {
@@ -14,31 +13,31 @@ describe('Controller::gameController', () => {
 
   beforeEach(function () {
     sandbox
-      .stub(artistService, 'addRelatedArtistListToArtist')
+      .stub(artistModule.service, 'addRelatedArtistListToArtist')
       .callsFake(async function fakeFn() {
         return artistServiceStub.addRelatedArtistListToArtist
       })
 
     sandbox
-      .stub(trackService, 'getUsedPages')
+      .stub(trackModule.service, 'getUsedPages')
       .callsFake(async function fakeFn() {
         return trackServiceStub.getUsedPages
       })
 
     sandbox
-      .stub(trackService, 'updateManyPlayed')
+      .stub(trackModule.service, 'updateManyPlayed')
       .callsFake(async function fakeFn() {
         return {}
       })
 
     sandbox
-      .stub(artistService, 'createArtistList')
+      .stub(artistModule.service, 'createArtistList')
       .callsFake(async function fakeFn() {
         return []
       })
 
     sandbox
-      .stub(trackService, 'createTrackList')
+      .stub(trackModule.service, 'createTrackList')
       .callsFake(async function fakeFn() {
         return []
       })
@@ -69,28 +68,28 @@ describe('Controller::gameController', () => {
       })
 
     sandbox
-      .stub(trackService, 'addSnippetIntoTrack')
+      .stub(trackModule.service, 'addSnippetIntoTrack')
       .onFirstCall()
       .resolves(trackServiceStub.addSnippetIntoTrack[0])
       .onSecondCall()
       .resolves(trackServiceStub.addSnippetIntoTrack[1])
 
     const fromDBGetTrackList = sandbox
-      .stub(trackService, 'getValidTrackList')
+      .stub(trackModule.service, 'getValidTrackList')
       .onFirstCall()
       .resolves(trackServiceStub.empty_valid_track_list)
       .onSecondCall()
       .resolves(trackServiceStub.snippet_empty_valid_track_list)
 
     const fromDBUpdatedPlayed = sandbox
-      .stub(trackService, 'updateOnePlayed')
+      .stub(trackModule.service, 'updateOnePlayed')
       .onFirstCall()
       .resolves(trackServiceStub.updateOnePlayed[0])
       .onSecondCall()
       .resolves(trackServiceStub.updateOnePlayed[1])
 
     sandbox
-      .stub(artistService, 'getRelatedArtistNameList')
+      .stub(artistModule.service, 'getRelatedArtistNameList')
       .callsFake(async function fakeFn() {
         return artistServiceStub.empty_related_artist_name_list
       })
@@ -100,7 +99,7 @@ describe('Controller::gameController', () => {
       url: 'start-game',
     }
 
-    const game = await gameClient.startGame(startGameReq)
+    const game = await gameModule.client.startGame(startGameReq)
 
     sinon.assert.callCount(apiGetTrackList, 1)
     sinon.assert.callCount(apiGetSnippet, startGameReq.game_size)
@@ -132,28 +131,28 @@ describe('Controller::gameController', () => {
       })
 
     sandbox
-      .stub(trackHelper, 'getUpdatedBySnippetTrack')
+      .stub(trackModule.helper, 'getUpdatedBySnippetTrack')
       .callsFake(async function fakeFn() {
         return trackServiceStub.snippet_valid_track_list[0]
       })
 
     const fromDBGetTrackList = sandbox
-      .stub(trackService, 'getValidTrackList')
+      .stub(trackModule.service, 'getValidTrackList')
       .resolves(trackServiceStub.snippet_valid_track_list)
 
     sandbox
-      .stub(artistService, 'getRelatedArtistNameList')
+      .stub(artistModule.service, 'getRelatedArtistNameList')
       .callsFake(async function fakeFn() {
         return artistServiceStub.related_artist_name_list
       })
     const fromDBUpdatedPlayed = sandbox
-      .stub(trackService, 'updateOnePlayed')
+      .stub(trackModule.service, 'updateOnePlayed')
       .onFirstCall()
       .resolves(trackServiceStub.updateOnePlayed[0])
       .onSecondCall()
       .resolves(trackServiceStub.updateOnePlayed[1])
 
-    const game = await gameClient.startGame({
+    const game = await gameModule.client.startGame({
       game_size: 1,
       url: 'start-game',
     })
@@ -170,7 +169,7 @@ describe('Controller::gameController', () => {
 
   it('Playing with many tracks into DB but not enough Snippet and related artists', async function () {
     const getDbTrackListResponse = sandbox
-      .stub(trackService, 'getValidTrackList')
+      .stub(trackModule.service, 'getValidTrackList')
       .onFirstCall()
       .resolves(trackServiceStub.snippet_empty_valid_track_list)
       .onSecondCall()
@@ -195,26 +194,26 @@ describe('Controller::gameController', () => {
       })
 
     sandbox
-      .stub(trackService, 'addSnippetIntoTrack')
+      .stub(trackModule.service, 'addSnippetIntoTrack')
       .onFirstCall()
       .resolves(trackServiceStub.snippet_valid_track_list[0])
       .onSecondCall()
       .resolves(trackServiceStub.snippet_valid_track_list[1])
 
     sandbox
-      .stub(artistService, 'getRelatedArtistNameList')
+      .stub(artistModule.service, 'getRelatedArtistNameList')
       .callsFake(async function fakeFn() {
         return artistServiceStub.empty_related_artist_name_list
       })
 
     const fromDBUpdatedPlayed = sandbox
-      .stub(trackService, 'updateOnePlayed')
+      .stub(trackModule.service, 'updateOnePlayed')
       .onFirstCall()
       .resolves(trackServiceStub.updateOnePlayed[0])
       .onSecondCall()
       .resolves(trackServiceStub.updateOnePlayed[1])
 
-    const game = await gameClient.startGame({
+    const game = await gameModule.client.startGame({
       game_size: 2,
       url: 'start-game',
     })
@@ -236,7 +235,7 @@ describe('Controller::gameController', () => {
 
   it('Playing with many tracks and related artists into DB but not enough Snippet ', async function () {
     const getDbTrackListResponse = sandbox
-      .stub(trackService, 'getValidTrackList')
+      .stub(trackModule.service, 'getValidTrackList')
       .onFirstCall()
       .resolves(trackServiceStub.snippet_empty_valid_track_list)
       .onSecondCall()
@@ -261,26 +260,26 @@ describe('Controller::gameController', () => {
       })
 
     sandbox
-      .stub(trackService, 'addSnippetIntoTrack')
+      .stub(trackModule.service, 'addSnippetIntoTrack')
       .onFirstCall()
       .resolves(trackServiceStub.snippet_valid_track_list[0])
       .onSecondCall()
       .resolves(trackServiceStub.snippet_valid_track_list[1])
 
     sandbox
-      .stub(artistService, 'getRelatedArtistNameList')
+      .stub(artistModule.service, 'getRelatedArtistNameList')
       .callsFake(async function fakeFn() {
         return artistServiceStub.related_artist_name_list
       })
 
     const fromDBUpdatedPlayed = sandbox
-      .stub(trackService, 'updateOnePlayed')
+      .stub(trackModule.service, 'updateOnePlayed')
       .onFirstCall()
       .resolves(trackServiceStub.updateOnePlayed[0])
       .onSecondCall()
       .resolves(trackServiceStub.updateOnePlayed[1])
 
-    const game = await gameClient.startGame({
+    const game = await gameModule.client.startGame({
       game_size: 2,
       url: 'start-game',
     })
@@ -302,7 +301,7 @@ describe('Controller::gameController', () => {
 
   it('Playing with many tracks and snippets into DB but not enough related artists ', async function () {
     const getDbTrackListResponse = sandbox
-      .stub(trackService, 'getValidTrackList')
+      .stub(trackModule.service, 'getValidTrackList')
       .onFirstCall()
       .resolves(trackServiceStub.snippet_valid_track_list)
       .onSecondCall()
@@ -327,26 +326,26 @@ describe('Controller::gameController', () => {
       })
 
     sandbox
-      .stub(trackService, 'addSnippetIntoTrack')
+      .stub(trackModule.service, 'addSnippetIntoTrack')
       .onFirstCall()
       .resolves(trackServiceStub.snippet_valid_track_list[0])
       .onSecondCall()
       .resolves(trackServiceStub.snippet_valid_track_list[1])
 
     sandbox
-      .stub(artistService, 'getRelatedArtistNameList')
+      .stub(artistModule.service, 'getRelatedArtistNameList')
       .callsFake(async function fakeFn() {
         return artistServiceStub.empty_related_artist_name_list
       })
 
     const fromDBUpdatedPlayed = sandbox
-      .stub(trackService, 'updateOnePlayed')
+      .stub(trackModule.service, 'updateOnePlayed')
       .onFirstCall()
       .resolves(trackServiceStub.updateOnePlayed[0])
       .onSecondCall()
       .resolves(trackServiceStub.updateOnePlayed[1])
 
-    const game = await gameClient.startGame({
+    const game = await gameModule.client.startGame({
       game_size: 2,
       url: 'start-game',
     })

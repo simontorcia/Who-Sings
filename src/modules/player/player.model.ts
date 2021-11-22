@@ -1,8 +1,8 @@
 // GAME: punteggio (totale somma quiz), player
 
 import { Schema, model } from 'mongoose'
-import { IPlayer } from '../interfaces/player.type'
-import { PLAYER_MAX_SCORE_INIT } from '../constants/constants'
+import { IPlayer } from './player.type'
+import { PLAYER_MAX_SCORE_INIT } from '../../constants/constants'
 
 export const PlayerSchema = new Schema(
   {

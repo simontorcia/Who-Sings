@@ -1,17 +1,13 @@
-import { trackHelper } from './track.helper'
-import { artistHelper } from './artist.helper'
-import { trackService } from '../services/track.service'
-import { ITrack } from '../interfaces/track.type'
-import { utilsLib } from '../shared/utils'
+import { ITrack } from '../track/track.type'
+import { utilsLib } from '../../shared/utils'
 import {
   GET_FILTERED_RANDOM_START,
   LAZY_START_GAME,
-} from '../constants/constants'
-import Logger from '../shared/logger.lib'
-import {
-  IStartGameRequest,
-  IStartGameResponseItem,
-} from '../interfaces/game.type'
+} from '../../constants/constants'
+import Logger from '../../shared/logger.lib'
+import { IStartGameRequest, IStartGameResponseItem } from './game.type'
+import { trackModule } from '../../modules/track/track.module'
+import { artistModule } from '../../modules/artist/artist.module'
 
 const createGameEngine = async (
   payload: IStartGameRequest,
@@ -61,7 +57,7 @@ const createQuiz = async (
   valid_track_list: ITrack[],
   url: string
 ): Promise<IStartGameResponseItem | null> => {
-  const updated_track = await trackHelper.getUpdatedBySnippetTrack(
+  const updated_track = await trackModule.helper.getUpdatedBySnippetTrack(
     valid_track_list[random_index]
   )
 
@@ -80,7 +76,7 @@ const createQuiz = async (
       `GameHelper :: createGameEngine :: quiz: ${JSON.stringify(quiz)}`
     )
     // update played track
-    await trackService.updateOnePlayed(updated_track)
+    await trackModule.service.updateOnePlayed(updated_track)
 
     return quiz
   }
@@ -95,8 +91,8 @@ const getWrongAnswers = async (
   try {
     Logger.debug(`GameHelper :: getWrongAnswers :: START `)
     return url.includes(LAZY_START_GAME)
-      ? await artistHelper.getLazyArtistNameList(track)
-      : await artistHelper.getRelatedArtistNameList(track)
+      ? await artistModule.helper.getLazyArtistNameList(track)
+      : await artistModule.helper.getRelatedArtistNameList(track)
   } catch (err) {
     Logger.debug(`GameHelper :: getWrongAnswers :: Err:${err} `)
     throw err

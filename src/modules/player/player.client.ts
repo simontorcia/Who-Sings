@@ -1,4 +1,4 @@
-import { utilsLib } from '../shared/utils'
+import { utilsLib } from '../../shared/utils'
 import {
   IPlayer,
   ISaveScoreResponse,
@@ -6,9 +6,9 @@ import {
   IGetHighScoresRequest,
   IGetHighScoresResponse,
   IGetLeaderboardResponse,
-} from '../interfaces/player.type'
-import { playerService } from '../services/player.service'
-import Logger from '../shared/logger.lib'
+} from './player.type'
+import { playerModule } from './player.module'
+import Logger from '../../shared/logger.lib'
 
 const getHighScores = async (
   payload: IGetHighScoresRequest
@@ -17,7 +17,7 @@ const getHighScores = async (
   Logger.debug(
     `PlayerClient :: getHighScores :: INIT with player_name:${player_name}`
   )
-  const high_scores = await playerService.getHighScores(player_name)
+  const high_scores = await playerModule.service.getHighScores(player_name)
 
   if (!high_scores) {
     throw new Error(`Error getting high_scores for user ${player_name}`)
@@ -37,7 +37,7 @@ const getHighScores = async (
 const getLeaderboard = async (): Promise<IGetLeaderboardResponse> => {
   Logger.debug(`PlayerClient :: getLeaderboard :: START`)
 
-  const leaderboard = await playerService.getLeaderboard()
+  const leaderboard = await playerModule.service.getLeaderboard()
   if (!leaderboard) {
     throw new Error('PLAYER_CLIENT::GET_LEADERBOARD::LEADERBOARD_NULL')
   }
@@ -59,7 +59,10 @@ const saveScore = async (
   )
 
   const scores = [score]
-  const updated_player = await playerService.upsertPlayer(player_name, scores)
+  const updated_player = await playerModule.service.upsertPlayer(
+    player_name,
+    scores
+  )
 
   if (!updated_player) {
     throw new Error('PLAYER_CLIENT::SAVE_SCORE::UPDATED_PLAYER_NULL')
@@ -87,7 +90,7 @@ const updateMaxScore = async (
   Logger.debug(
     `PlayerClient :: updateMaxScore :: START for score:${score} and name:${name}`
   )
-  const updated_player = await playerService.updateMaxScore(score, name)
+  const updated_player = await playerModule.service.updateMaxScore(score, name)
 
   if (!updated_player) {
     throw new Error('PLAYER_CLIENT::GET_HIGH_SCORES::HIGH_SCORES_NULL')

@@ -1,5 +1,5 @@
 import { ITrackResponse } from '../interfaces/get_tracks.interface'
-import { ITrack } from '../../../interfaces/track.type'
+import { ITrack } from '../../../modules/track/track.type'
 import { PLAYED_INIT_VALUE } from '../../../constants/constants'
 // import { IRelatedArtistResponse } from '../interfaces/get_related_artists.interface'
 import Logger from '../../../shared/logger.lib'

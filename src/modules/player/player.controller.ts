@@ -1,17 +1,17 @@
 import { Request, Response } from 'express'
-import { playerClient } from '../clients/player.client'
+import { playerModule } from './player.module'
 import { validationResult } from 'express-validator'
 import {
   STATUS_BAD_REQUEST,
   STATUS_INTERNAL_ERROR,
   STATUS_NOT_FOUND,
-} from '../constants/http.status.constants'
+} from '../../constants/http.status.constants'
 import {
   GET_HIGH_SCORE,
   GET_LEADERBOARD,
   SAVE_SCORE,
-} from '../constants/validator.constant'
-import Logger from '../shared/logger.lib'
+} from '../../constants/validator.constant'
+import Logger from '../../shared/logger.lib'
 
 const getHighScores = async (req: Request, res: Response) => {
   Logger.debug(`PlayerController :: getHighScores :: START`)
@@ -29,7 +29,7 @@ const getHighScores = async (req: Request, res: Response) => {
 
     const { player_name } = req.query
 
-    const high_scores_response = await playerClient.getHighScores({
+    const high_scores_response = await playerModule.client.getHighScores({
       player_name: '' + player_name,
     })
 
@@ -67,7 +67,7 @@ const getLeaderboard = async (req: Request, res: Response) => {
       const errors_msg = errors.array({ onlyFirstError: true })
       return res.status(STATUS_BAD_REQUEST).json({ message: errors_msg[0].msg })
     }
-    const leaderBoard_response = await playerClient.getLeaderboard()
+    const leaderBoard_response = await playerModule.client.getLeaderboard()
     Logger.debug(
       `PlayerController :: getLeaderboard :: END with leaderBoard_response:${JSON.stringify(
         leaderBoard_response
@@ -104,7 +104,7 @@ const saveScore = async (req: Request, res: Response) => {
     }
 
     const { score, player_name } = req.body
-    const save_score_response = await playerClient.saveScore({
+    const save_score_response = await playerModule.client.saveScore({
       score,
       player_name,
     })
