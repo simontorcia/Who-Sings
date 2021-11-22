@@ -38,15 +38,15 @@ const getArtist = async (artist_id: number): Promise<IArtist | null> => {
   }
 }
 
-const addRelatedArtistList = async (
+const addRelatedArtistListToArtist = async (
   artist_id: number,
   related_artist_names: string[]
 ): Promise<IArtist | null> => {
-  Logger.debug(`ArtistSevice :: addRelatedArtistList :: START`)
+  Logger.debug(`ArtistSevice :: addRelatedArtistListToArtist :: START`)
   try {
     return Artist.findOneAndUpdate({ artist_id }, { related_artist_names })
   } catch (err) {
-    Logger.error(`ArtistSevice :: addRelatedArtistList :: Err:${err}`)
+    Logger.error(`ArtistSevice :: addRelatedArtistListToArtist :: Err:${err}`)
     throw new Error(`ARTIST_SERVICE::ADD_RELATED_ARTIST_LIST::ERROR`)
   }
 }
@@ -98,5 +98,5 @@ export const artistService = {
   getArtist,
   getRandomArtistList,
   getRelatedArtistNameList,
-  addRelatedArtistList,
+  addRelatedArtistListToArtist,
 }

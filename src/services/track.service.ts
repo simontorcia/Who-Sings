@@ -31,7 +31,7 @@ const createTrackList = async (track_list: ITrack[]) => {
 
 // return random "size" valid_track_list ordered by snippet (before snippet)
 const getValidTrackList = async (played: number): Promise<ITrack[] | null> => {
-  Logger.debug(`TrackService :: createTrackList :: START`)
+  Logger.debug(`TrackService :: getValidTrackList :: START played:${played}`)
   try {
     return Track.aggregate([
       { $match: { snippet: { $ne: ERROR_NOT_VALID_SNIPPET }, played } },
