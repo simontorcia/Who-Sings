@@ -1,6 +1,0 @@
-node_modules
-dist
-mongo_DB_Data
-logs
-.env
-.idea
