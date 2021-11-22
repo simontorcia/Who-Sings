@@ -4,8 +4,9 @@ import {
   GET_LEADERDBOARD_SORT_DIRECTION,
   GET_LEADERDBOARD_LIMIT,
   NEW_SCORES_SORT_DIRECTION,
-  GET_HIGH_SCORES_HIGH_SCORES_LIMIT, GET_HIGH_SCORES_SCORES_SORT_DIRECTION
-} from '../constants/constants';
+  GET_HIGH_SCORES_HIGH_SCORES_LIMIT,
+  GET_HIGH_SCORES_SCORES_SORT_DIRECTION,
+} from '../constants/constants'
 import Logger from '../shared/logger.lib'
 
 const upsertPlayer = async (
