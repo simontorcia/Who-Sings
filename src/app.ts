@@ -22,10 +22,10 @@ class App {
     this.app.use(bodyParser.json({ limit: '50mb' }))
 
     //Allows us to receive requests with data in x-www-form-urlencoded format
-    this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+    // this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 
     //Enables cors
-    this.app.use(cors())
+    // this.app.use(cors())
 
     // initialize dotenv configuration
     dotenv.config()
@@ -34,11 +34,6 @@ class App {
   private routes = (): void => {
     this.app.locals.baseURL = process.env.ORIGIN
     const router = express.Router()
-    router.get('/', (req: any, res: any, next: any) => {
-      res.json({
-        message: 'Hello World!',
-      })
-    })
 
     this.app.use('/game', gameRouter)
     this.app.use('/player', playerRouter)
