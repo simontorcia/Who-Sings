@@ -4,8 +4,8 @@ import {
   GET_LEADERDBOARD_SORT_DIRECTION,
   GET_LEADERDBOARD_LIMIT,
   NEW_SCORES_SORT_DIRECTION,
-  GET_HIGH_SCORES_SCORES_SORT_DIRCTION,
   GET_HIGH_SCORES_HIGH_SCORES_LIMIT,
+  GET_HIGH_SCORES_SCORES_SORT_DIRECTION,
 } from '../constants/constants'
 import Logger from '../shared/logger.lib'
 
@@ -54,7 +54,7 @@ const getHighScores = async (name: string): Promise<number[] | null> => {
   let high_scores: number[] = []
   try {
     const player = await Player.findOne({ name }, 'scores', {
-      sort: { scores: GET_HIGH_SCORES_SCORES_SORT_DIRCTION },
+      sort: { scores: GET_HIGH_SCORES_SCORES_SORT_DIRECTION },
     }).limit(GET_HIGH_SCORES_HIGH_SCORES_LIMIT)
     if (player) {
       high_scores = [...high_scores, ...player.scores]
