@@ -16,9 +16,3 @@ export const GET_RELATED_ARTISTS = {
   format: 'json',
   page_size: 10, // max
 }
-
-// export const GET_CHART_ARTIST_LIST = {
-//   uri: '/chart.artists.get',
-//   format: 'json',
-//   page_size: 10, // max
-// }

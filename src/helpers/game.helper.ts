@@ -98,7 +98,7 @@ const getWrongAnswers = async (
       ? await artistHelper.getLazyArtistNameList(track)
       : await artistHelper.getRelatedArtistNameList(track)
   } catch (err) {
-    Logger.error(`GameHelper :: getWrongAnswers :: Err:${err} `)
+    Logger.debug(`GameHelper :: getWrongAnswers :: Err:${err} `)
     throw err
   }
 }
