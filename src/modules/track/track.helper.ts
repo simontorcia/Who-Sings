@@ -77,7 +77,7 @@ const createTrackList = async (game_size: number, random_page: string) => {
   }
 }
 
-const getPlayedValue = async (used_pages: string[]) => {
+const getPlayed = async (used_pages: string[]) => {
   try {
     Logger.debug(
       `TrackHelper :: getPlayedValue :: START used_pages:${used_pages}`
@@ -145,9 +145,7 @@ const getValidTrackList = async (game_size: number): Promise<ITrack[]> => {
     )
     const used_pages = await trackModule.service.getUsedPages()
 
-    const played = used_pages
-      ? await getPlayedValue(used_pages)
-      : PLAYED_INIT_VALUE
+    const played = used_pages ? await getPlayed(used_pages) : PLAYED_INIT_VALUE
 
     const db_valid_track_list = await trackModule.service.getValidTrackList(
       played

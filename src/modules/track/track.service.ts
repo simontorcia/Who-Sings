@@ -17,6 +17,7 @@ const createTrackList = async (track_list: ITrack[]) => {
     if (track_list.length === 0) {
       return []
     }
+    // Performs multiple write operations with controls for order of execution.
     return trackModule.model.bulkWrite(
       track_list.map((track) => ({
         updateOne: {
@@ -36,6 +37,7 @@ const createTrackList = async (track_list: ITrack[]) => {
 const getValidTrackList = async (played: number): Promise<ITrack[] | null> => {
   Logger.debug(`TrackService :: getValidTrackList :: START played:${played}`)
   try {
+    // Aggregation operations process multiple documents and return computed results.
     return trackModule.model
       .aggregate([
         { $match: { snippet: { $ne: ERROR_NOT_VALID_SNIPPET }, played } },
@@ -57,11 +59,12 @@ const updateManyPlayed = async (track_list: ITrack[]) => {
     return track_list
   }
   try {
+    // Performs multiple write operations with controls for order of execution.
     return trackModule.model.bulkWrite(
       track_list.map((track) => ({
         updateOne: {
           filter: { track_id: track.track_id },
-          update: { $inc: { played: PLAYED_INC_VALUE } },
+          update: { $inc: { played: PLAYED_INC_VALUE } }, // played ++
           upsert: true,
         },
       }))
@@ -74,7 +77,6 @@ const updateManyPlayed = async (track_list: ITrack[]) => {
 
 const updateOnePlayed = async (track: ITrack): Promise<ITrack | null> => {
   Logger.debug(`TrackService :: updateOnePlayed :: START`)
-
   try {
     return trackModule.model.findByIdAndUpdate(
       track._id,
@@ -100,7 +102,7 @@ const addSnippetIntoTrack = async (
     return trackModule.model.findByIdAndUpdate(
       track._id,
       { snippet },
-      { new: true }
+      { new: true } // return updated object
     )
   } catch (err) {
     Logger.error(`TrackService :: addSnippetIntoTrack :: Err:${err}`)
@@ -112,8 +114,8 @@ const addSnippetIntoTrack = async (
 
 const getUsedPages = async (): Promise<string[] | null> => {
   Logger.debug(`TrackService :: getUsedPages :: START`)
-
   try {
+    // Finds the distinct values for a specified field across a single collection or view and returns the results in an array.
     return trackModule.model.find().distinct('page')
   } catch (err) {
     Logger.error(`TrackService :: getUsedPages :: Err:${err}`)
@@ -124,19 +126,17 @@ const getUsedPages = async (): Promise<string[] | null> => {
 const getMinPlayed = async (): Promise<number | null> => {
   Logger.debug(`TrackService :: getMinPlayed :: START`)
   try {
-    let track_list: ITrack[] = []
     let played = PLAYED_INIT_VALUE
-    track_list = [
-      ...track_list,
-      ...(await trackModule.model
-        .find({ track_id: { $exists: true } })
-        .sort({ played: PLAYED_SORT_VALUE })
-        .limit(PLAYED_LIMIT_VALUE)),
-    ]
 
-    if (track_list.length > 0) {
+    const track_list = await trackModule.model
+      .find({ track_id: { $exists: true } })
+      .sort({ played: PLAYED_SORT_VALUE })
+      .limit(PLAYED_LIMIT_VALUE)
+
+    if (track_list && track_list.length > 0) {
       played = track_list[0].played
     }
+
     return played
   } catch (err) {
     Logger.error(`TrackService :: getMinPlayed :: Err:${err}`)
