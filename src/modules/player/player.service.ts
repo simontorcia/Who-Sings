@@ -11,15 +11,18 @@ import { playerModule } from './player.module'
 
 const upsertPlayer = async (
   name: string,
-  new_scores: number[]
+  score: number
 ): Promise<IPlayer | null> => {
   Logger.debug(`PlayerService :: upsertPlayer :: START`)
   try {
-    const player = await playerModule.model.findOneAndUpdate(
+    return playerModule.model.findOneAndUpdate(
       { name },
       {
+        // $max: {
+        //   max_score: score,
+        // },
         $push: {
-          scores: { $each: new_scores, $sort: NEW_SCORES_SORT_DIRECTION },
+          scores: { $each: [score], $sort: NEW_SCORES_SORT_DIRECTION },
         },
       },
       {
@@ -28,26 +31,24 @@ const upsertPlayer = async (
         setDefaultsOnInsert: true,
       }
     )
-
-    return player
   } catch (err) {
     Logger.error(`PlayerService :: upsertPlayer :: Err:${err}`)
     throw new Error(`ERROR ON PLAYER ${name} UPSERT`)
   }
 }
 
-const updateMaxScore = async (
-  score: number,
-  name: string
-): Promise<IPlayer | null> => {
-  Logger.debug(`PlayerService :: updateMaxScore :: START`)
-  try {
-    return playerModule.model.findOneAndUpdate({ name }, { max_score: score })
-  } catch (err) {
-    Logger.error(`PlayerService :: updateMaxScore :: Err:${err}`)
-    throw new Error(`ERROR ON UPDATE MAX SCORE`)
-  }
-}
+// const updateMaxScore = async (
+//   score: number,
+//   name: string
+// ): Promise<IPlayer | null> => {
+//   Logger.debug(`PlayerService :: updateMaxScore :: START`)
+//   try {
+//     return playerModule.model.findOneAndUpdate({ name }, { max_score: score })
+//   } catch (err) {
+//     Logger.error(`PlayerService :: updateMaxScore :: Err:${err}`)
+//     throw new Error(`ERROR ON UPDATE MAX SCORE`)
+//   }
+// }
 
 const getHighScores = async (name: string): Promise<number[] | null> => {
   Logger.debug(`PlayerService :: getHighScores :: START`)
@@ -68,21 +69,37 @@ const getHighScores = async (name: string): Promise<number[] | null> => {
   }
 }
 
-const getLeaderboard = async (): Promise<
+// const getLeaderboard = async (): Promise<
+//   IGetLeaderboardItemResponse[] | null
+// > => {
+//   Logger.debug(`PlayerService :: getLeaderboard :: START`)
+//   let leaderboard: IGetLeaderboardItemResponse[] = []
+//   try {
+//     leaderboard = [
+//       ...leaderboard,
+//       ...(await playerModule.model.aggregate([
+//         { $unset: ['_id', 'scores'] },
+//         { $sort: { max_score: GET_LEADERDBOARD_SORT_DIRECTION } },
+//         { $limit: GET_LEADERDBOARD_LIMIT },
+//       ])),
+//     ]
+//     return leaderboard
+//   } catch (err) {
+//     Logger.error(`PlayerService :: getLeaderboard :: Err:${err}`)
+//     throw new Error(`GET_LEADERBOAD ERROR ${err}`)
+//   }
+// }
+
+const getLeaderboardRefactoring = async (): Promise<
   IGetLeaderboardItemResponse[] | null
 > => {
   Logger.debug(`PlayerService :: getLeaderboard :: START`)
-  let leaderboard: IGetLeaderboardItemResponse[] = []
   try {
-    leaderboard = [
-      ...leaderboard,
-      ...(await playerModule.model.aggregate([
-        { $unset: ['_id', 'scores'] },
-        { $sort: { max_score: GET_LEADERDBOARD_SORT_DIRECTION } },
-        { $limit: GET_LEADERDBOARD_LIMIT },
-      ])),
-    ]
-    return leaderboard
+    return playerModule.model.aggregate([
+      { $project: { _id: 0, name: 1, max_score: { $max: '$scores' } } },
+      { $sort: { max_score: GET_LEADERDBOARD_SORT_DIRECTION } },
+      { $limit: GET_LEADERDBOARD_LIMIT },
+    ])
   } catch (err) {
     Logger.error(`PlayerService :: getLeaderboard :: Err:${err}`)
     throw new Error(`GET_LEADERBOAD ERROR ${err}`)
@@ -90,8 +107,9 @@ const getLeaderboard = async (): Promise<
 }
 
 export const playerService = {
-  updateMaxScore,
+  // updateMaxScore,
   getHighScores,
-  getLeaderboard,
+  // getLeaderboard,
+  getLeaderboardRefactoring,
   upsertPlayer,
 }

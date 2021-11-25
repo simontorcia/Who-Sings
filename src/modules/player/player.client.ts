@@ -37,7 +37,9 @@ const getHighScores = async (
 const getLeaderboard = async (): Promise<IGetLeaderboardResponse> => {
   Logger.debug(`PlayerClient :: getLeaderboard :: START`)
 
-  const leaderboard = await playerModule.service.getLeaderboard()
+  // const leaderboard = await playerModule.service.getLeaderboard()
+  const leaderboard = await playerModule.service.getLeaderboardRefactoring()
+
   if (!leaderboard) {
     throw new Error('PLAYER_CLIENT::GET_LEADERBOARD::LEADERBOARD_NULL')
   }
@@ -52,54 +54,60 @@ const getLeaderboard = async (): Promise<IGetLeaderboardResponse> => {
 
 const saveScore = async (
   payload: ISaveScoreRequest
-): Promise<ISaveScoreResponse> => {
-  const { player_name, score } = payload
-  Logger.debug(
-    `PlayerClient :: saveScore :: START with player_name:${player_name} and score:${score}`
-  )
+): Promise<ISaveScoreResponse | null> => {
+  try {
+    const { player_name, score } = payload
+    Logger.debug(
+      `PlayerClient :: saveScore :: START with player_name:${player_name} and score:${score}`
+    )
 
-  const scores = [score]
-  const updated_player = await playerModule.service.upsertPlayer(
-    player_name,
-    scores
-  )
+    // const scores = [score]
+    const updated_player = await playerModule.service.upsertPlayer(
+      player_name,
+      score
+    )
 
-  if (!updated_player) {
-    throw new Error('PLAYER_CLIENT::SAVE_SCORE::UPDATED_PLAYER_NULL')
-  }
-
-  if (updated_player.max_score < score) {
-    Logger.debug(`PlayerClient :: saveScore :: Update Max Score`)
-    const player = await updateMaxScore(score, updated_player.name)
-    if (player) {
-      return { player_name: player.name, score }
+    if (!updated_player) {
+      // throw new Error('PLAYER_CLIENT::SAVE_SCORE::UPDATED_PLAYER_NULL')
+      return null
     }
-  }
-  const result = { player_name: updated_player.name, score }
-  Logger.debug(
-    `PlayerClient :: saveScore :: END with result:${JSON.stringify(result)}`
-  )
 
-  return result
+    // if (updated_player.max_score < score) {
+    //   Logger.debug(`PlayerClient :: saveScore :: Update Max Score`)
+    //   const player = await updateMaxScore(score, updated_player.name)
+    //   if (player) {
+    //     return { player_name: player.name, score }
+    //   }
+    // }
+    const result = { player_name: updated_player.name, score }
+    Logger.debug(
+      `PlayerClient :: saveScore :: END with result:${JSON.stringify(result)}`
+    )
+
+    return result
+  } catch (err) {
+    Logger.debug(`PlayerClient :: saveScore :: err: ${err}`)
+    throw err
+  }
 }
 
-const updateMaxScore = async (
-  score: number,
-  name: string
-): Promise<IPlayer> => {
-  Logger.debug(
-    `PlayerClient :: updateMaxScore :: START for score:${score} and name:${name}`
-  )
-  const updated_player = await playerModule.service.updateMaxScore(score, name)
+// const updateMaxScore = async (
+//   score: number,
+//   name: string
+// ): Promise<IPlayer> => {
+//   Logger.debug(
+//     `PlayerClient :: updateMaxScore :: START for score:${score} and name:${name}`
+//   )
+//   const updated_player = await playerModule.service.updateMaxScore(score, name)
 
-  if (!updated_player) {
-    throw new Error('PLAYER_CLIENT::GET_HIGH_SCORES::HIGH_SCORES_NULL')
-  }
-  Logger.debug(
-    `PlayerClient :: updateMaxScore :: END  updated_player:${updated_player}`
-  )
-  return updated_player
-}
+//   if (!updated_player) {
+//     throw new Error('PLAYER_CLIENT::GET_HIGH_SCORES::HIGH_SCORES_NULL')
+//   }
+//   Logger.debug(
+//     `PlayerClient :: updateMaxScore :: END  updated_player:${updated_player}`
+//   )
+//   return updated_player
+// }
 
 export const playerClient = {
   getLeaderboard,

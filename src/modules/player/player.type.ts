@@ -1,7 +1,7 @@
 export interface IPlayer {
   name: string
   scores: number[]
-  max_score: number
+  // max_score: number
 }
 export interface IGetHighScoresRequest {
   player_name: string

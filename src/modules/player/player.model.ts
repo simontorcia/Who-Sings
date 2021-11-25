@@ -11,7 +11,7 @@ export const PlayerSchema = new Schema(
       unique: true,
       required: [true, 'Field is required'],
     },
-    max_score: { type: Number, default: PLAYER_MAX_SCORE_INIT },
+    // max_score: { type: Number, default: PLAYER_MAX_SCORE_INIT },
     scores: { type: [Number], default: [] },
   },
   { versionKey: false }
